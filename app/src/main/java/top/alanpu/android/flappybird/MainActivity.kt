@@ -1,14 +1,10 @@
 package top.alanpu.android.flappybird
 
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.*
-import android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import android.view.MotionEvent
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import top.alanpu.android.flappybird.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
