@@ -19,7 +19,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var bmBird: Bitmap
     private lateinit var bmTubeUp: Bitmap
     private lateinit var bmTubeDown: Bitmap
-    private val bmTubeLength = 320.0f
     private lateinit var gameThread: Thread
 
     private var alive = true
@@ -142,9 +141,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                     // Clear the canvas
                     it.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
 
-                    // Draw the bird
                     it.save()
-                    it.drawBitmap(bmBird, birdPosX, birdPosY, null)
+
+                    // Draw tubes
                     for (index in 0..tubeCount) {
                         val tube = getTube(index)
                         it.drawBitmap(bmTubeUp,
@@ -157,6 +156,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                                         tube.position + bmTubeDown.width, measuredHeight - groundHeight + 65),
                                 null)
                     }
+
+                    // Draw the bird
+                    it.drawBitmap(bmBird, birdPosX, birdPosY, null)
+
                     it.restore()
                     this.unlockCanvasAndPost(it)
                 }
