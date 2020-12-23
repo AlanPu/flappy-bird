@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import top.alanpu.android.flappybird.extension.dp
 import top.alanpu.android.flappybird.model.Tube
 import java.lang.Thread.sleep
 import java.nio.channels.Pipe
@@ -20,6 +21,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var bmTubeUp: Bitmap
     private lateinit var bmTubeDown: Bitmap
     private lateinit var gameThread: Thread
+
+    private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var score = 0
 
     private var alive = true
     private var running = false
@@ -68,6 +72,11 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
         holder.addCallback(this)
         holder.setFormat(PixelFormat.TRANSPARENT)
+
+        scorePaint.apply {
+            color = Color.WHITE
+            textSize = 32f.dp
+        }
     }
 
     /**
@@ -159,6 +168,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
                     // Draw the bird
                     it.drawBitmap(bmBird, birdPosX, birdPosY, null)
+
+                    // Draw score
+                    it.drawText(score.toString(), 90f, 180f, scorePaint)
 
                     it.restore()
                     this.unlockCanvasAndPost(it)

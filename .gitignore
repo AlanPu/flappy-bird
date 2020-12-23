@@ -88,3 +88,4 @@ lint/tmp/
 .idea/
 local.properties
 
+.DS_Store
