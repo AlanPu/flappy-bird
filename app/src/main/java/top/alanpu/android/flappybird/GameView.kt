@@ -32,7 +32,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
     private var birdPosX = 0.0f
     private var birdPosY = 0.0f
-    private var birdVelocity = 10.0f
+    private var birdVelocity = 8.0f
     private var birdAcceleration = 0.5f
     private val birdJumpVelocity = -10f
 
@@ -253,7 +253,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         birdPosX = width.toFloat() / 3
-        birdPosY = height.toFloat() / 2
+        birdPosY = height.toFloat() / 2 - 400
         tubeCount = (measuredWidth - tubeWidth) / (tubeWidth + tubeInterval)
     }
 
