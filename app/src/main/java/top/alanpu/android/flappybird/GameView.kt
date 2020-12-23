@@ -99,9 +99,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     override fun run() {
         while (running && alive) {
             birdPosY += birdVelocity
-            if (birdPosY <= 5 || birdPosY >= measuredHeight - groundHeight) {
-                alive = false
-            }
 
             for (index in 0..tubeCount) {
                 val tube = getTube(index)
@@ -113,11 +110,43 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             }
 
             draw()
+
+            alive = isAlive()
+
             if (birdVelocity <= 10.0f) {
                 birdVelocity += birdAcceleration
             }
             sleep(15)
         }
+    }
+
+    /**
+     * Check if the bird is still alive.
+     */
+    private fun isAlive(): Boolean {
+
+        val birdRightPos = birdPosX + bmBird.width
+        val birdBottomPos = birdPosY + bmBird.height
+
+        // Return false if the bird touches the top or bottom
+        if (birdPosY <= 5 || birdPosY >= measuredHeight - groundHeight) {
+            return false
+        }
+
+        for (index in 0..tubeCount) {
+            val tube = getTube(index)
+
+            // The tube is in the area between bird and right border of game area
+            if (tube.position + tubeWidth >= birdPosX && tube.position < measuredWidth) {
+                if (birdRightPos >= tube.position && birdPosX <= tube.position + tubeWidth) {
+                    if (birdPosY <= tube.length || birdBottomPos >= tube.length + tubeGap) {
+                        return false
+                    }
+                }
+            }
+        }
+
+        return true
     }
 
     /**
