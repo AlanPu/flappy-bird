@@ -1,11 +1,14 @@
 package top.alanpu.android.flappybird
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.*
+import android.os.Handler
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.appcompat.app.AlertDialog
 import top.alanpu.android.flappybird.extension.dp
 import top.alanpu.android.flappybird.model.Tube
 import java.lang.Thread.sleep
@@ -16,6 +19,8 @@ import java.util.*
  * Custom view to draw the game area.
  */
 class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
+
+    private var gameListener: GameListener? = null
 
     private lateinit var bmBird: Bitmap
     private lateinit var bmTubeUp: Bitmap
@@ -33,7 +38,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private var birdPosX = 0.0f
     private var birdPosY = 0.0f
     private var birdVelocity = 8.0f
-    private var birdAcceleration = 0.5f
+    private val birdAcceleration = 0.5f
     private val birdJumpVelocity = -10f
 
     private val tubeGap = 450
@@ -58,6 +63,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             defStyle
     ) {
         init(attrs, defStyle)
+    }
+
+    fun setGameListener(gameListener: GameListener) {
+        this.gameListener = gameListener
     }
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
@@ -106,6 +115,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                 if (tube.position <= -tubeWidth) {
                     tube.position = measuredWidth
                     tube.length = calculateTubeLength()
+                    tube.isPassed = false
                 }
             }
 
@@ -118,6 +128,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             }
             sleep(15)
         }
+        if (!alive) {
+//            gameListener?.gameOvered()
+        }
     }
 
     /**
@@ -125,7 +138,14 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     private fun isAlive(): Boolean {
 
-        val birdRightPos = birdPosX + bmBird.width
+        // When the onResume() is called, the window size is not yet ready for use.  In that case,
+        // the calculation of birdPosX based on the screen width is not valid, therefore always
+        // return true here
+        if (width == 0 || height == 0) {
+            return true
+        }
+
+        val birdRightPos = birdPosX + bmBird.width - 10
         val birdBottomPos = birdPosY + bmBird.height
 
         // Return false if the bird touches the top or bottom
@@ -143,6 +163,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                         return false
                     }
                 }
+            }
+            else if (tube.position < birdPosX && !tube.isPassed) {
+                score++
+                tube.isPassed = true
             }
         }
 
@@ -234,9 +258,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    private fun startGame() {
-        running = true
-        alive = true
+    fun startGame() {
+        resetData()
         gameThread = Thread(this)
         gameThread.start()
     }
@@ -262,5 +285,21 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         stopGame()
+    }
+
+    fun resetData() {
+        score = 0
+
+        birdPosX = width.toFloat() / 3
+        birdPosY = height.toFloat() / 2 - 400
+        tubeCount = (measuredWidth - tubeWidth) / (tubeWidth + tubeInterval)
+        birdVelocity = 8.0f
+
+        tubes = mutableListOf()
+        tubes.clear()
+        tubeCount = 0
+
+        running = true
+        alive = true
     }
 }

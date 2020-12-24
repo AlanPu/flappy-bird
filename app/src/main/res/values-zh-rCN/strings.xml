@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">FlappyBird</string>
     <string name="tapToStart">点击屏幕开始</string>
+    <string name="game_over">游戏结束</string>
+    <string name="play_again">再玩一次？</string>
+    <string name="yes">好的</string>
+    <string name="no">不玩了</string>
 </resources>
