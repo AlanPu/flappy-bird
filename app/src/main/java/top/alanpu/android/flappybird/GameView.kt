@@ -86,14 +86,21 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * When the view is resumed, restart the game.
      */
     fun resume() {
-        startGame()
+        running = true
+        gameThread = Thread(this)
+        gameThread.start()
     }
 
     /**
      * When the view is paused, stop the game.
      */
     fun pause() {
-        stopGame()
+        running = false
+        try {
+            gameThread.join()
+        } catch (e: InterruptedException) {
+
+        }
     }
 
     /**
@@ -241,7 +248,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Stop the game.
      */
     private fun stopGame() {
-        resetData()
         running = false
         alive = false
         try {
@@ -253,7 +259,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    private fun startGame() {
+    fun startGame() {
         resetData()
         gameThread = Thread(this)
         gameThread.start()
@@ -263,16 +269,13 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Start the game when the view is created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
-        startGame()
     }
 
     /**
      * When the view size is changed, update the bird's position, and initialize tube list.
      */
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        birdPosX = width.toFloat() / 3
-        birdPosY = height.toFloat() / 2 - 400
-        tubeCount = (measuredWidth - tubeWidth) / (tubeWidth + tubeInterval)
+        startGame()
     }
 
     /**
@@ -287,16 +290,11 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     private fun resetData() {
         score = 0
-
-        birdPosX = width.toFloat() / 3
-        birdPosY = height.toFloat() / 2 - 400
+        birdPosX = measuredWidth.toFloat() / 3
+        birdPosY = (measuredHeight.toFloat() - groundHeight) / 3
         tubeCount = (measuredWidth - tubeWidth) / (tubeWidth + tubeInterval)
         birdVelocity = 8.0f
-
         tubes = mutableListOf()
-        tubes.clear()
-        tubeCount = 0
-
         running = true
         alive = true
     }

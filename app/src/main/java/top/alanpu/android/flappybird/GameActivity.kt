@@ -40,7 +40,6 @@ class GameActivity : AppCompatActivity(), GameListener {
             setMessage(R.string.play_again)
             setCancelable(false)
             setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                onResume()
             }
 
             setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
