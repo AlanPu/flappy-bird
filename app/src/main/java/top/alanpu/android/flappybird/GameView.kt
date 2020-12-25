@@ -20,8 +20,6 @@ import java.util.*
  */
 class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
-    var gameListener: GameListener? = null
-
     private lateinit var bmBird: Bitmap
     private lateinit var bmTubeUp: Bitmap
     private lateinit var bmTubeDown: Bitmap
@@ -243,6 +241,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Stop the game.
      */
     private fun stopGame() {
+        resetData()
         running = false
         alive = false
         try {
@@ -254,7 +253,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    fun startGame() {
+    private fun startGame() {
         resetData()
         gameThread = Thread(this)
         gameThread.start()

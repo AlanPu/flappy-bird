@@ -40,7 +40,7 @@ class GameActivity : AppCompatActivity(), GameListener {
             setMessage(R.string.play_again)
             setCancelable(false)
             setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                binding.gameView.startGame()
+                onResume()
             }
 
             setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
@@ -51,7 +51,6 @@ class GameActivity : AppCompatActivity(), GameListener {
 
     override fun onResume() {
         super.onResume()
-        binding.gameView.gameListener = this
         binding.gameView.resume()
     }
 
