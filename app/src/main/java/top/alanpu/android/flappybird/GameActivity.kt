@@ -11,29 +11,28 @@ import top.alanpu.android.flappybird.databinding.ActivityGameBinding
 
 class GameActivity : AppCompatActivity(), GameListener {
 
-//    companion object {
-//        const val GAME_OVER = 0x00
-//    }
+    companion object {
+        const val GAME_OVER = 0x00
+    }
 
     private lateinit var binding: ActivityGameBinding
     private lateinit var alertDialog: AlertDialog.Builder
 
-//    val handler = Handler(Handler.Callback { message: Message ->
-//        when (message.what) {
-//            GAME_OVER -> {
-//                alertDialog.show()
-//                return@Callback true
-//            }
-//        }
-//        return@Callback false
-//    })
+    val handler = Handler(Handler.Callback { message: Message ->
+        when (message.what) {
+            GAME_OVER -> {
+                alertDialog.show()
+                return@Callback true
+            }
+        }
+        return@Callback false
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         binding = ActivityGameBinding.inflate(layoutInflater)
-        binding.gameView.setGameListener(this)
         setContentView(R.layout.activity_game)
 
         alertDialog = AlertDialog.Builder(this).apply {
@@ -41,21 +40,18 @@ class GameActivity : AppCompatActivity(), GameListener {
             setMessage(R.string.play_again)
             setCancelable(false)
             setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                {
-                    binding.gameView.resetData()
-                    binding.gameView.startGame()
-                }
+                binding.gameView.startGame()
             }
-            setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
-                {
 
-                }
+            setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
+                this@GameActivity.onBackPressed()
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        binding.gameView.gameListener = this
         binding.gameView.resume()
     }
 
@@ -65,6 +61,6 @@ class GameActivity : AppCompatActivity(), GameListener {
     }
 
     override fun gameOvered() {
-        alertDialog.show()
+        handler.sendEmptyMessage(GAME_OVER)
     }
 }

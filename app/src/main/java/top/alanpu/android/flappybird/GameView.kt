@@ -20,7 +20,7 @@ import java.util.*
  */
 class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
-    private var gameListener: GameListener? = null
+    var gameListener: GameListener? = null
 
     private lateinit var bmBird: Bitmap
     private lateinit var bmTubeUp: Bitmap
@@ -63,10 +63,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             defStyle
     ) {
         init(attrs, defStyle)
-    }
-
-    fun setGameListener(gameListener: GameListener) {
-        this.gameListener = gameListener
     }
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
@@ -129,7 +125,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             sleep(15)
         }
         if (!alive) {
-//            gameListener?.gameOvered()
+            (context as GameListener).gameOvered()
         }
     }
 
@@ -287,7 +283,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         stopGame()
     }
 
-    fun resetData() {
+    /**
+     * Reset data for every new game.
+     */
+    private fun resetData() {
         score = 0
 
         birdPosX = width.toFloat() / 3
