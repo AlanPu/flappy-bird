@@ -3,17 +3,17 @@ package top.alanpu.android.flappybird
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.*
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import androidx.appcompat.app.AlertDialog
 import top.alanpu.android.flappybird.extension.dp
+import top.alanpu.android.flappybird.extension.toDegree
 import top.alanpu.android.flappybird.model.Tube
 import java.lang.Thread.sleep
-import java.nio.channels.Pipe
 import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Custom view to draw the game area.
@@ -21,6 +21,7 @@ import java.util.*
 class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
     private lateinit var bmBird: Bitmap
+    private var bmRotateBird: Bitmap? = null
     private lateinit var bmTubeUp: Bitmap
     private lateinit var bmTubeDown: Bitmap
     private lateinit var gameThread: Thread
@@ -130,8 +131,43 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             sleep(15)
         }
         if (!alive) {
-            (context as GameListener).gameOvered()
+            fall()
         }
+    }
+
+    /**
+     * Fall down to the ground when game over.
+     */
+    private fun fall() {
+        val groundPosY = measuredHeight - groundHeight
+        var canvas : Canvas? = null
+
+        // If not on the ground, need to draw the rotate animation
+        if (birdPosY < groundPosY) {
+            bmRotateBird = Bitmap.createBitmap(bmBird.width, bmBird.width, Bitmap.Config.ARGB_8888)
+            canvas = Canvas(bmRotateBird!!)
+        }
+
+        var i = 1
+        val pivot = bmBird.width.toFloat() / 2
+
+        // Fall and rotate until it is on the ground
+        while (birdPosY < groundPosY) {
+            birdPosY += 15
+
+            canvas?.apply {
+                save()
+                drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY)
+                rotate(15f * i % 360, pivot, pivot)
+                drawBitmap(bmBird, 0f, 0f, null)
+                rotate(-15f * i % 360)
+                restore()
+            }
+            draw()
+            i++
+        }
+        bmRotateBird = null
+//        (context as GameListener).gameOvered()
     }
 
     /**
@@ -221,7 +257,12 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                     }
 
                     // Draw the bird
-                    it.drawBitmap(bmBird, birdPosX, birdPosY, null)
+                    if (bmRotateBird != null) {
+                        it.drawBitmap(bmRotateBird!!, birdPosX, birdPosY, null)
+                    }
+                    else {
+                        it.drawBitmap(bmBird, birdPosX, birdPosY, null)
+                    }
 
                     // Draw score
                     it.drawText(score.toString(), 90f, 180f, scorePaint)
