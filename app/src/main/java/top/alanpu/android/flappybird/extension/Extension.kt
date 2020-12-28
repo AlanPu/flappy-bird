@@ -9,7 +9,3 @@ val Float.dp
             this,
             Resources.getSystem().displayMetrics
     )
-
-fun Double.toDegree() : Double {
-    return Math.PI / 180 * this
-}

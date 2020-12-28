@@ -1,19 +1,15 @@
 package top.alanpu.android.flappybird
 
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import top.alanpu.android.flappybird.extension.dp
-import top.alanpu.android.flappybird.extension.toDegree
 import top.alanpu.android.flappybird.model.Tube
 import java.lang.Thread.sleep
 import java.util.*
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Custom view to draw the game area.
