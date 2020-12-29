@@ -127,6 +127,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             sleep(15)
         }
         if (!alive) {
+            // Sleep 0.5 second before falling down
+            sleep(500)
             fall()
         }
     }
