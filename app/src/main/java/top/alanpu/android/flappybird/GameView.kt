@@ -298,7 +298,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    fun startGame() {
+    private fun startGame() {
         resetData()
         gameThread = Thread(this)
         gameThread.start()
