@@ -83,21 +83,12 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * When the view is resumed, restart the game.
      */
     fun resume() {
-        running = true
-        gameThread = Thread(this)
-        gameThread.start()
     }
 
     /**
      * When the view is paused, stop the game.
      */
     fun pause() {
-        running = false
-        try {
-            gameThread.join()
-        } catch (e: InterruptedException) {
-
-        }
     }
 
     /**
@@ -128,7 +119,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         }
         if (!alive) {
             // Sleep 0.5 second before falling down
-            sleep(500)
+            sleep(300)
             fall()
         }
     }
@@ -138,7 +129,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     private fun fall() {
         val groundPosY = measuredHeight - groundHeight
-        var canvas : Canvas? = null
+        var canvas: Canvas? = null
 
         // If not on the ground, need to draw the rotate animation
         if (birdPosY < groundPosY) {
@@ -165,7 +156,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             i++
         }
         bmRotateBird = null
-//        (context as GameListener).gameOvered()
+        (context as GameListener).gameOvered()
+        stopGame()
     }
 
     /**
@@ -198,8 +190,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                         return false
                     }
                 }
-            }
-            else if (tube.position < birdPosX && !tube.isPassed) {
+            } else if (tube.position < birdPosX && !tube.isPassed) {
                 score++
                 tube.isPassed = true
             }
@@ -257,8 +248,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                     // Draw the bird
                     if (bmRotateBird != null) {
                         it.drawBitmap(bmRotateBird!!, birdPosX, birdPosY, null)
-                    }
-                    else {
+                    } else {
                         it.drawBitmap(bmBird, birdPosX, birdPosY, null)
                     }
 
@@ -290,7 +280,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         running = false
         alive = false
         try {
-            gameThread.join()
+            gameThread.join(1000)
         } catch (e: InterruptedException) {
         }
     }
@@ -298,7 +288,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    private fun startGame() {
+    fun startGame() {
         resetData()
         gameThread = Thread(this)
         gameThread.start()
@@ -308,20 +298,18 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Start the game when the view is created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
-    }
-
-    /**
-     * When the view size is changed, update the bird's position, and initialize tube list.
-     */
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         startGame()
     }
 
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+    }
+
     /**
-     * Stop the game when the view is destroyed.
+     * Stop the game and release <code>Surface</code> when the view is destroyed.
      */
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         stopGame()
+        holder.surface.release()
     }
 
     /**

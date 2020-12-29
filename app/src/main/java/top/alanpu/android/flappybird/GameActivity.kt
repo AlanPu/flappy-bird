@@ -1,6 +1,7 @@
 package top.alanpu.android.flappybird
 
 import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -22,7 +23,7 @@ class GameActivity : AppCompatActivity(), GameListener {
         when (message.what) {
             GAME_OVER -> {
                 alertDialog.show()
-                return@Callback true
+                return@Callback false
             }
         }
         return@Callback false
@@ -39,9 +40,14 @@ class GameActivity : AppCompatActivity(), GameListener {
             setTitle(R.string.game_over)
             setMessage(R.string.play_again)
             setCancelable(false)
+
+            // Restart the game
             setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
+                val intent = Intent(this@GameActivity, GameActivity::class.java)
+                startActivity(intent)
             }
 
+            // Back to previous screen, i.e. the MainActivity
             setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
                 this@GameActivity.onBackPressed()
             }
@@ -50,12 +56,12 @@ class GameActivity : AppCompatActivity(), GameListener {
 
     override fun onResume() {
         super.onResume()
-        binding.gameView.resume()
+//        binding.gameView.startGame()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.gameView.pause()
+//        binding.gameView.pause()
     }
 
     override fun gameOvered() {
