@@ -117,7 +117,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             }
             sleep(15)
         }
-        if (!alive) {
+        if (running && !alive) {
             // Sleep 0.5 second before falling down
             sleep(300)
             fall()
@@ -288,7 +288,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Start the game.
      */
-    fun startGame() {
+    private fun startGame() {
         resetData()
         gameThread = Thread(this)
         gameThread.start()
@@ -315,7 +315,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     /**
      * Reset data for every new game.
      */
-    private fun resetData() {
+    fun resetData() {
         score = 0
         birdPosX = measuredWidth.toFloat() / 3
         birdPosY = (measuredHeight.toFloat() - groundHeight) / 3

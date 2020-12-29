@@ -56,7 +56,7 @@ class GameActivity : AppCompatActivity(), GameListener {
 
     override fun onResume() {
         super.onResume()
-//        binding.gameView.startGame()
+        binding.gameView.resetData()
     }
 
     override fun onPause() {
