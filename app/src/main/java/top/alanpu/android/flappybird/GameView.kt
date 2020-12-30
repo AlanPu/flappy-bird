@@ -11,7 +11,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.appcompat.app.AlertDialog
 import top.alanpu.android.flappybird.extension.dp
-import top.alanpu.android.flappybird.model.Tube
+import top.alanpu.android.flappybird.model.Pipe
 import java.lang.Thread.sleep
 import java.util.*
 
@@ -26,8 +26,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
     private lateinit var bmBird: Bitmap
     private var bmRotateBird: Bitmap? = null
-    private lateinit var bmTubeUp: Bitmap
-    private lateinit var bmTubeDown: Bitmap
+    private lateinit var bmPipeUp: Bitmap
+    private lateinit var bmPipeDown: Bitmap
     private lateinit var gameThread: Thread
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -44,13 +44,13 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private val birdAcceleration = 0.5f
     private val birdJumpVelocity = -10f
 
-    private val tubeGap = 450
-    private val tubeBaseLength = 100
-    private var tubeWidth = 0
-    private val tubeVelocity = 5
-    private val tubeInterval = 300
-    private var tubes: MutableList<Tube> = mutableListOf()
-    private var tubeCount = 0
+    private val pipeGap = 450
+    private val pipeBaseLength = 100
+    private var pipeWidth = 0
+    private val pipeVelocity = 5
+    private val pipeInterval = 300
+    private var pipes: MutableList<Pipe> = mutableListOf()
+    private var pipeCount = 0
 
     private lateinit var alertDialog: AlertDialog.Builder
     private val msgHandler = Handler(Handler.Callback { message: Message ->
@@ -84,10 +84,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         keepScreenOn = true
 
         bmBird = BitmapFactory.decodeResource(resources, R.drawable.ic_bird)
-        bmTubeUp = BitmapFactory.decodeResource(resources, R.drawable.ic_tube1)
-        bmTubeDown = BitmapFactory.decodeResource(resources, R.drawable.ic_tube2)
+        bmPipeUp = BitmapFactory.decodeResource(resources, R.drawable.ic_pipe1)
+        bmPipeDown = BitmapFactory.decodeResource(resources, R.drawable.ic_pipe2)
 
-        tubeWidth = bmTubeUp.width
+        pipeWidth = bmPipeUp.width
 
         holder.addCallback(this)
         holder.setFormat(PixelFormat.TRANSPARENT)
@@ -137,13 +137,13 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         while (running && alive) {
             birdPosY += birdVelocity
 
-            for (index in 0..tubeCount) {
-                val tube = getTube(index)
-                tube.position -= tubeVelocity
-                if (tube.position <= -tubeWidth) {
-                    tube.position = measuredWidth
-                    tube.length = calculateTubeLength()
-                    tube.isPassed = false
+            for (index in 0..pipeCount) {
+                val pipe = getPipe(index)
+                pipe.position -= pipeVelocity
+                if (pipe.position <= -pipeWidth) {
+                    pipe.position = measuredWidth
+                    pipe.length = calculatePipeLength()
+                    pipe.isPassed = false
                 }
             }
 
@@ -219,19 +219,19 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             return false
         }
 
-        for (index in 0..tubeCount) {
-            val tube = getTube(index)
+        for (index in 0..pipeCount) {
+            val pipe = getPipe(index)
 
-            // The tube is in the area between bird and right border of game area
-            if (tube.position + tubeWidth >= birdPosX && tube.position < measuredWidth) {
-                if (birdRightPos >= tube.position && birdPosX <= tube.position + tubeWidth) {
-                    if (birdPosY <= tube.length || birdBottomPos >= tube.length + tubeGap) {
+            // The pipe is in the area between bird and right border of game area
+            if (pipe.position + pipeWidth >= birdPosX && pipe.position < measuredWidth) {
+                if (birdRightPos >= pipe.position && birdPosX <= pipe.position + pipeWidth) {
+                    if (birdPosY <= pipe.length || birdBottomPos >= pipe.length + pipeGap) {
                         return false
                     }
                 }
-            } else if (tube.position < birdPosX && !tube.isPassed) {
+            } else if (pipe.position < birdPosX && !pipe.isPassed) {
                 score++
-                tube.isPassed = true
+                pipe.isPassed = true
             }
         }
 
@@ -239,11 +239,11 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     }
 
     /**
-     * Calculate a random length for a new tube.
+     * Calculate a random length for a new pipe.
      */
-    private fun calculateTubeLength(): Int {
-        val baseline = (measuredHeight - tubeGap - groundHeight - tubeBaseLength * 2) / 2
-        return (tubeBaseLength + baseline * Random().nextFloat()).toInt() + 10
+    private fun calculatePipeLength(): Int {
+        val baseline = (measuredHeight - pipeGap - groundHeight - pipeBaseLength * 2) / 2
+        return (pipeBaseLength + baseline * Random().nextFloat()).toInt() + 10
     }
 
     /**
@@ -270,23 +270,23 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
                     it.save()
 
-                    // Draw tubes
-                    for (index in 0..tubeCount) {
-                        val tube = getTube(index)
+                    // Draw pipes
+                    for (index in 0..pipeCount) {
+                        val pipe = getPipe(index)
                         it.drawBitmap(
-                            bmTubeUp,
+                            bmPipeUp,
                             null,
                             Rect(
-                                tube.position, 0,
-                                (tube.position + bmTubeUp.width), tube.length
+                                pipe.position, 0,
+                                (pipe.position + bmPipeUp.width), pipe.length
                             ),
                             null
                         )
                         it.drawBitmap(
-                            bmTubeDown, null,
+                            bmPipeDown, null,
                             Rect(
-                                tube.position, tube.length + tubeGap,
-                                tube.position + bmTubeDown.width, measuredHeight - groundHeight + 65
+                                pipe.position, pipe.length + pipeGap,
+                                pipe.position + bmPipeDown.width, measuredHeight - groundHeight + 65
                             ),
                             null
                         )
@@ -310,15 +310,15 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     }
 
     /**
-     * Get tube at index.
+     * Get pipe at index.
      */
-    private fun getTube(index: Int): Tube {
-        if (index >= tubes.size) {
-            val tube =
-                Tube(measuredWidth + (tubeWidth + tubeInterval) * index, calculateTubeLength())
-            tubes.add(tube)
+    private fun getPipe(index: Int): Pipe {
+        if (index >= pipes.size) {
+            val pipe =
+                Pipe(measuredWidth + (pipeWidth + pipeInterval) * index, calculatePipeLength())
+            pipes.add(pipe)
         }
-        return tubes[index]
+        return pipes[index]
     }
 
     /**
@@ -367,9 +367,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         score = 0
         birdPosX = measuredWidth.toFloat() / 3
         birdPosY = (measuredHeight.toFloat() - groundHeight) / 3
-        tubeCount = (measuredWidth - tubeWidth) / (tubeWidth + tubeInterval)
+        pipeCount = (measuredWidth - pipeWidth) / (pipeWidth + pipeInterval)
         birdVelocity = 8.0f
-        tubes = mutableListOf()
+        pipes = mutableListOf()
         running = true
         alive = true
     }
