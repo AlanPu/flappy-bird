@@ -1,11 +1,15 @@
 package top.alanpu.android.flappybird
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.*
+import android.os.Handler
+import android.os.Message
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.appcompat.app.AlertDialog
 import top.alanpu.android.flappybird.extension.dp
 import top.alanpu.android.flappybird.model.Tube
 import java.lang.Thread.sleep
@@ -15,6 +19,10 @@ import java.util.*
  * Custom view to draw the game area.
  */
 class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
+
+    companion object {
+        const val GAME_OVER = 0x00
+    }
 
     private lateinit var bmBird: Bitmap
     private var bmRotateBird: Bitmap? = null
@@ -43,6 +51,17 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private val tubeInterval = 300
     private var tubes: MutableList<Tube> = mutableListOf()
     private var tubeCount = 0
+
+    private lateinit var alertDialog: AlertDialog.Builder
+    private val msgHandler = Handler(Handler.Callback { message: Message ->
+        when (message.what) {
+            GAME_OVER -> {
+                alertDialog.show()
+                return@Callback true
+            }
+        }
+        return@Callback false
+    })
 
     constructor(context: Context) : super(context) {
         init(null, 0)
@@ -156,8 +175,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             i++
         }
         bmRotateBird = null
-        (context as GameListener).gameOvered()
         stopGame()
+        msgHandler.sendEmptyMessage(GameActivity.GAME_OVER)
     }
 
     /**
@@ -298,6 +317,21 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Start the game when the view is created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
+        alertDialog = AlertDialog.Builder(this.context).apply {
+            setTitle(R.string.game_over)
+            setMessage(R.string.play_again)
+            setCancelable(false)
+
+            // Restart the game
+            setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
+                startGame()
+            }
+
+            // Back to previous screen, i.e. the MainActivity
+            setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
+                (this@GameView.context as GameActivity).onBackPressed()
+            }
+        }
         startGame()
     }
 

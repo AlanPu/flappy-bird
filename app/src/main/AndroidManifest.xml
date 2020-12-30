@@ -11,7 +11,8 @@
         android:theme="@style/Theme.FlappyBird">
         <activity
             android:name=".GameActivity"
-            android:label="@string/title_activity_game"></activity>
+            android:label="@string/title_activity_game">
+        </activity>
 
         <activity android:name=".MainActivity">
             <intent-filter>
