@@ -72,9 +72,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
-            context,
-            attrs,
-            defStyle
+        context,
+        attrs,
+        defStyle
     ) {
         init(attrs, defStyle)
     }
@@ -102,12 +102,16 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * When the view is resumed, restart the game.
      */
     fun resume() {
+        if (holder.surface.isValid) {
+            startGame()
+        }
     }
 
     /**
      * When the view is paused, stop the game.
      */
     fun pause() {
+        stopGame()
     }
 
     /**
@@ -253,15 +257,23 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                     // Draw tubes
                     for (index in 0..tubeCount) {
                         val tube = getTube(index)
-                        it.drawBitmap(bmTubeUp,
-                                null,
-                                Rect(tube.position, 0,
-                                        (tube.position + bmTubeUp.width), tube.length),
-                                null)
-                        it.drawBitmap(bmTubeDown, null,
-                                Rect(tube.position, tube.length + tubeGap,
-                                        tube.position + bmTubeDown.width, measuredHeight - groundHeight + 65),
-                                null)
+                        it.drawBitmap(
+                            bmTubeUp,
+                            null,
+                            Rect(
+                                tube.position, 0,
+                                (tube.position + bmTubeUp.width), tube.length
+                            ),
+                            null
+                        )
+                        it.drawBitmap(
+                            bmTubeDown, null,
+                            Rect(
+                                tube.position, tube.length + tubeGap,
+                                tube.position + bmTubeDown.width, measuredHeight - groundHeight + 65
+                            ),
+                            null
+                        )
                     }
 
                     // Draw the bird
@@ -286,7 +298,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     private fun getTube(index: Int): Tube {
         if (index >= tubes.size) {
-            val tube = Tube(measuredWidth + (tubeWidth + tubeInterval) * index, calculateTubeLength())
+            val tube =
+                Tube(measuredWidth + (tubeWidth + tubeInterval) * index, calculateTubeLength())
             tubes.add(tube)
         }
         return tubes[index]
@@ -299,7 +312,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         running = false
         alive = false
         try {
-            gameThread.join(1000)
+            gameThread.join(500)
         } catch (e: InterruptedException) {
         }
     }

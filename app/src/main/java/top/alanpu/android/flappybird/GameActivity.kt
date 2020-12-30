@@ -1,13 +1,8 @@
 package top.alanpu.android.flappybird
 
-import android.content.DialogInterface
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import top.alanpu.android.flappybird.databinding.ActivityGameBinding
 
 class GameActivity : AppCompatActivity() {
@@ -28,11 +23,11 @@ class GameActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.gameView.resetData()
+        binding.gameView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-//        binding.gameView.pause()
+        binding.gameView.pause()
     }
 }
