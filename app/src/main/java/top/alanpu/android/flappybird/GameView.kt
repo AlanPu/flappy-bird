@@ -96,6 +96,22 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             color = Color.WHITE
             textSize = 32f.dp
         }
+
+        alertDialog = AlertDialog.Builder(this.context).apply {
+            setTitle(R.string.game_over)
+            setMessage(R.string.play_again)
+            setCancelable(false)
+
+            // Restart the game
+            setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
+                startGame()
+            }
+
+            // Back to previous screen, i.e. the MainActivity
+            setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
+                (this@GameView.context as GameActivity).onBackPressed()
+            }
+        }
     }
 
     /**
@@ -330,21 +346,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Start the game when the view is created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
-        alertDialog = AlertDialog.Builder(this.context).apply {
-            setTitle(R.string.game_over)
-            setMessage(R.string.play_again)
-            setCancelable(false)
-
-            // Restart the game
-            setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                startGame()
-            }
-
-            // Back to previous screen, i.e. the MainActivity
-            setNegativeButton(R.string.no) { _: DialogInterface, _: Int ->
-                (this@GameView.context as GameActivity).onBackPressed()
-            }
-        }
         startGame()
     }
 
