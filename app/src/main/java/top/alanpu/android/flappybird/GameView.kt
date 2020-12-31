@@ -33,6 +33,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
 
     private lateinit var scoreMedia: MediaPlayer
     private lateinit var dieMedia: MediaPlayer
+    private lateinit var wingMedia: MediaPlayer
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var score = 0
@@ -122,6 +123,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             it!!
         }
         dieMedia = MediaPlayer.create(context, R.raw.die).let {
+            it.isLooping = false
+            it!!
+        }
+        wingMedia = MediaPlayer.create(context, R.raw.wing).let {
             it.isLooping = false
             it!!
         }
@@ -275,6 +280,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             birdVelocity = birdJumpVelocity
+            wingMedia.start()
             return true
         }
         return super.onTouchEvent(event)
