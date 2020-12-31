@@ -118,23 +118,6 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                 (this@GameView.context as GameActivity).onBackPressed()
             }
         }
-
-        scoreMedia = MediaPlayer.create(context, R.raw.score).let {
-            it.isLooping = false
-            it!!
-        }
-        dieMedia = MediaPlayer.create(context, R.raw.die).let {
-            it.isLooping = false
-            it!!
-        }
-        wingMedia = MediaPlayer.create(context, R.raw.wing).let {
-            it.isLooping = false
-            it!!
-        }
-        hitMedia = MediaPlayer.create(context, R.raw.hit).let {
-            it.isLooping = false
-            it!!
-        }
     }
 
     /**
@@ -380,6 +363,23 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Start the game when the view is created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
+        scoreMedia = MediaPlayer.create(context, R.raw.score).let {
+            it.isLooping = false
+            it!!
+        }
+        dieMedia = MediaPlayer.create(context, R.raw.die).let {
+            it.isLooping = false
+            it!!
+        }
+        wingMedia = MediaPlayer.create(context, R.raw.wing).let {
+            it.isLooping = false
+            it!!
+        }
+        hitMedia = MediaPlayer.create(context, R.raw.hit).let {
+            it.isLooping = false
+            it!!
+        }
+
         startGame()
     }
 
@@ -391,6 +391,22 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      */
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         stopGame()
+        scoreMedia.apply {
+            stop()
+            release()
+        }
+        dieMedia.apply {
+            stop()
+            release()
+        }
+        wingMedia.apply {
+            stop()
+            release()
+        }
+        hitMedia.apply {
+            stop()
+            release()
+        }
         holder.surface.release()
     }
 
