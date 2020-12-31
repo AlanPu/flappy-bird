@@ -31,7 +31,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var bmPipeDown: Bitmap
     private lateinit var gameThread: Thread
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var scoreMedia: MediaPlayer
+    private lateinit var dieMedia: MediaPlayer
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var score = 0
@@ -116,8 +117,14 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             }
         }
 
-        mediaPlayer = MediaPlayer.create(context, R.raw.score)
-        mediaPlayer.isLooping = false
+        scoreMedia = MediaPlayer.create(context, R.raw.score).let {
+            it.isLooping = false
+            it!!
+        }
+        dieMedia = MediaPlayer.create(context, R.raw.die).let {
+            it.isLooping = false
+            it!!
+        }
     }
 
     /**
@@ -173,6 +180,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Fall down to the ground when game over.
      */
     private fun fall() {
+        dieMedia.start()
+
         val groundPosY = measuredHeight - groundHeight
         var canvas: Canvas? = null
 
@@ -248,7 +257,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Add score by 1, and player the sound
      */
     private fun score() {
-        mediaPlayer.start()
+        scoreMedia.start()
         score++
     }
 
