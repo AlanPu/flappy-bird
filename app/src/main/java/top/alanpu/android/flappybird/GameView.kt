@@ -34,6 +34,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var scoreMedia: MediaPlayer
     private lateinit var dieMedia: MediaPlayer
     private lateinit var wingMedia: MediaPlayer
+    private lateinit var hitMedia: MediaPlayer
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var score = 0
@@ -130,6 +131,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             it.isLooping = false
             it!!
         }
+        hitMedia = MediaPlayer.create(context, R.raw.hit).let {
+            it.isLooping = false
+            it!!
+        }
     }
 
     /**
@@ -185,13 +190,12 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
      * Fall down to the ground when game over.
      */
     private fun fall() {
-        dieMedia.start()
-
         val groundPosY = measuredHeight - groundHeight
         var canvas: Canvas? = null
 
         // If not on the ground, need to draw the rotate animation
         if (birdPosY < groundPosY) {
+            dieMedia.start()
             bmRotateBird = Bitmap.createBitmap(bmBird.width, bmBird.width, Bitmap.Config.ARGB_8888)
             canvas = Canvas(bmRotateBird!!)
         }
@@ -214,6 +218,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             draw()
             i++
         }
+        hitMedia.start()
         bmRotateBird = null
         stopGame()
         msgHandler.sendEmptyMessage(GameActivity.GAME_OVER)
