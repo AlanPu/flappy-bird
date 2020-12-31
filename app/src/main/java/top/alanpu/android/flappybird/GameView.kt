@@ -3,6 +3,7 @@ package top.alanpu.android.flappybird
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.*
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
@@ -29,6 +30,8 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var bmPipeUp: Bitmap
     private lateinit var bmPipeDown: Bitmap
     private lateinit var gameThread: Thread
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var score = 0
@@ -112,6 +115,9 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                 (this@GameView.context as GameActivity).onBackPressed()
             }
         }
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.score)
+        mediaPlayer.isLooping = false
     }
 
     /**
@@ -230,12 +236,20 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
                     }
                 }
             } else if (pipe.position < birdPosX && !pipe.isPassed) {
-                score++
+                score()
                 pipe.isPassed = true
             }
         }
 
         return true
+    }
+
+    /**
+     * Add score by 1, and player the sound
+     */
+    private fun score() {
+        mediaPlayer.start()
+        score++
     }
 
     /**
