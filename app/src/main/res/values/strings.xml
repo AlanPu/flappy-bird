@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlappyBird</string>
+    <string name="app_name">Flappy Bird</string>
     <string name="tapToStart">Tap to start</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="game_over">Game Over</string>
