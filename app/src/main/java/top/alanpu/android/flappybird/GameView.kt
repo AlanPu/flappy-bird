@@ -35,6 +35,7 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     private lateinit var dieMedia: MediaPlayer
     private lateinit var wingMedia: MediaPlayer
     private lateinit var hitMedia: MediaPlayer
+    private lateinit var themeMedia: MediaPlayer
 
     private val scorePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var score = 0
@@ -70,11 +71,11 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
     })
 
     constructor(context: Context) : super(context) {
-        init(null, 0)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(attrs, 0)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
@@ -82,10 +83,10 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
         attrs,
         defStyle
     ) {
-        init(attrs, defStyle)
+        init()
     }
 
-    private fun init(attrs: AttributeSet?, defStyle: Int) {
+    private fun init() {
         setZOrderOnTop(true)
         keepScreenOn = true
 
@@ -379,6 +380,11 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             it.isLooping = false
             it!!
         }
+        themeMedia = MediaPlayer.create(context, R.raw.play_theme).let {
+            it.isLooping = true
+            it.start()
+            it!!
+        }
 
         startGame()
     }
@@ -407,13 +413,18 @@ class GameView : SurfaceView, Runnable, SurfaceHolder.Callback {
             stop()
             release()
         }
+        themeMedia.apply {
+            stop()
+            reset()
+            release()
+        }
         holder.surface.release()
     }
 
     /**
      * Reset data for every new game.
      */
-    fun resetData() {
+    private fun resetData() {
         score = 0
         birdPosX = measuredWidth.toFloat() / 3
         birdPosY = (measuredHeight.toFloat() - groundHeight) / 3

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        themeMedia = MediaPlayer.create(this, R.raw.theme).let {
+        themeMedia = MediaPlayer.create(this, R.raw.main_theme).let {
             it.isLooping = true
             it!!
         }
