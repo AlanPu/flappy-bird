@@ -30,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         if (event.action == MotionEvent.ACTION_DOWN) {
             val intent = Intent(this, GameActivity::class.java)
             startActivity(intent)
+
+            // Return true as the event has been consumed
             return true
         }
         return super.onTouchEvent(event)
